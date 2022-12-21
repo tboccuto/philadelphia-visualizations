@@ -30,10 +30,10 @@ def plot_year_dispatch(y, data):
   fig = px.bar(df, x=[i[1] for i in dat2], y=[i[0] for i in dat2], title="Crime Dispatches in Philadelphia year "+str(y))
   return fig
 
-def init_seasons(data, crime):
+def init_season(data, crime):
   s = {}
-  for i in range(1, len(data)):
-    year, month, _ = year, month, _ = data['rows'][i]['dispatch_date_time'][0].split('-')
+  for i in range(1, len(data['rows'])):
+    year, month, _ = data['rows'][i]['dispatch_date_time'][0].split('-')
     s[year+'-'+month] = 0
   for k in s.keys():
     c = 0
@@ -42,6 +42,12 @@ def init_seasons(data, crime):
         c += 1
     s[k] = c
   return list(sorted(s.items()))
+
+def init_seasons(data, crimes):
+  g = {}
+  for c in crimes:
+    g[crimes] = init_season(data,c)
+  return g
 
 def plot_simple_time_series(df, x, y, title="", xlabel='time', ylabel='# of instances of crime', dpi=100):
   plt.figure(figsize=(15,4), dpi=dpi)
