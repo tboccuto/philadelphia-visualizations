@@ -20,7 +20,7 @@ def write_dict(d, fname):
 def plot_all_dispatch_crimes(data):
   AD = [data['rows'][i]['dc_dist'] for i in range(len(data['rows']))]
   ADC = Counter(ADC)
-  dat = [[k, v] for k,v in ADC.items() if k != 'Homicide - Criminal ' and k != 'Homicide - Criminal']
+  dat = [[k, v] for k,v in all_crime_counts.items() if k != 'Homicide - Criminal ' and k != 'Homicide - Criminal']
   df = pd.DataFrame(dat)
   fig = px.bar(df, x=[i[1] for i in dat], y=[i[0] for i in dat], title="Crime Dispatches in Philadelphia from 2006 - 2022")
   return fig
@@ -35,30 +35,23 @@ def plot_year_dispatch(y, data):
   fig = px.bar(df, x=[i[1] for i in dat2], y=[i[0] for i in dat2], title="Crime Dispatches in Philadelphia year "+str(y))
   return fig
 
-def month_count(data, crime, _sort=False, verbose=False):
-  s ret = {}, None
+def init_season(data, crime):
+  s = {}
   for i in range(1, len(data['rows'])):
-    year, month, _ = data['rows'][i]['dispatch_date_time'].split('-')
-    #print(year, month)
+    year, month, _ = data['rows'][i]['dispatch_date_time'][0].split('-')
     s[year+'-'+month] = 0
   for k in s.keys():
     c = 0
-    for i in range(1, len(data['rows'])):
-      if crime in data['rows'][i]['dc_dist'] and k in data['rows'][i]['dispatch_date_time']:
+    for j in range(1, len(data['rows'])):
+      if crime in data['rows'][j]['dc_dist'] and k in data['rows'][j]['dispatch_date_time'][0]:
         c += 1
-    if verbose:
-      print(f'k :{k} v :{c}')
     s[k] = c
-  if _sort:
-    ret = sorted(list(s.items()))
-  else:
-    ret = s
-  return ret
+  return list(sorted(s.items()))
 
-def month_counts(data, crimes):
+def init_seasons(data, crimes):
   g = {}
   for c in crimes:
-    g[crimes] = month_count(data,c, _sort=True)
+    g[crimes] = init_season(data,c)
   return g
 
 def plot_simple_time_series(df, x, y, title="", xlabel='time', ylabel='# of instances of crime', dpi=100):
@@ -96,25 +89,13 @@ def multiplicative_decomposition_detrending(data, multiplicative_decomposition):
 
 #sns dataframe, crime:str
 def parse_dataframe(df, crime):
-  if type(crime) is not type(str): raise ValueError(f'{crime} not type str')
+  if type(crime) not str: raise ValueError(f'{crime} not type str')
   cl = {}
   for i in range(len(df[0])):
     year, month = df[0][i].split('-')
     dd = year+month
     cl[int(dd)] = df[1][i]
   return pd.DataFrame({'dates':list(cl.keys()),str(crime):list(cl.values())})
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
