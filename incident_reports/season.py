@@ -2,6 +2,7 @@
 import os
 import json
 import numpy as np
+import sklearn
 import pandas as pd
 import seaborn as sns
 import plotly.express as px
@@ -86,7 +87,15 @@ def detrend_best_fit(data):
 def multiplicative_decomposition_detrending(data, multiplicative_decomposition):
   return np.array(df[1].values, dtype=np.float32) - np.array(multiplicative_decomposition.trend, dtype=np.float32)
 
-
+#sns dataframe, crime:str
+def parse_dataframe(df, crime):
+  if type(crime) not str: raise ValueError(f'{crime} not type str')
+  cl = {}
+  for i in range(len(df[0])):
+    year, month = df[0][i].split('-')
+    dd = year+month
+    cl[int(dd)] = df[1][i]
+  return pd.DataFrame({'dates':list(cl.keys()),str(crime):list(cl.values())})
 
 
 
