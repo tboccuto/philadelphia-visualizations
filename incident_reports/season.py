@@ -2,7 +2,6 @@
 import os
 import json
 import numpy as np
-import sklearn
 import pandas as pd
 import seaborn as sns
 import plotly.express as px
@@ -35,8 +34,8 @@ def plot_year_dispatch(y, data):
   fig = px.bar(df, x=[i[1] for i in dat2], y=[i[0] for i in dat2], title="Crime Dispatches in Philadelphia year "+str(y))
   return fig
 
-def init_season(data, crime):
-  s = {}
+def init_season(data, crime, _sort=False, verbose=False):
+  s, ret = {}, None
   for i in range(1, len(data['rows'])):
     year, month, _ = data['rows'][i]['dispatch_date_time'][0].split('-')
     s[year+'-'+month] = 0
@@ -45,13 +44,18 @@ def init_season(data, crime):
     for j in range(1, len(data['rows'])):
       if crime in data['rows'][j]['dc_dist'] and k in data['rows'][j]['dispatch_date_time'][0]:
         c += 1
+    if verbose: print(f'k {k}:c {c}')
     s[k] = c
-  return list(sorted(s.items()))
+  if _sort:
+    ret = list(sorted(s.items()))
+  else:
+    ret = s.items()
+  return ret
 
 def init_seasons(data, crimes):
   g = {}
   for c in crimes:
-    g[crimes] = init_season(data,c)
+    g[crimes] = init_season(data,c, _sort=True, verbose=False)
   return g
 
 def plot_simple_time_series(df, x, y, title="", xlabel='time', ylabel='# of instances of crime', dpi=100):
