@@ -11,7 +11,13 @@ import matplotlib.pyplot as plt
 from collections import Counter
 from statsmodels.tsa.seasonal import seasonal_decompose
 
-def write_dict(d, fname):
+def _dump(fname):
+  with open(os.getcwd()+fname) as json:
+    data = json.load(fname)
+  d2 = data.copy()
+  return data, d2
+
+def _write_dict(d, fname):
   with open(fname+'.json', 'w') as fp:
     json.dump(d, fp)
 
@@ -34,7 +40,7 @@ def plot_year_dispatch(y, data):
   fig = px.bar(df, x=[i[1] for i in dat2], y=[i[0] for i in dat2], title="Crime Dispatches in Philadelphia year "+str(y))
   return fig
 
-def init_season(data, crime, _sort=False, verbose=False):
+def month_count(data, crime, _sort=False, verbose=False):
   s, ret = {}, None
   for i in range(1, len(data['rows'])):
     year, month, _ = data['rows'][i]['dispatch_date_time'][0].split('-')
@@ -52,10 +58,10 @@ def init_season(data, crime, _sort=False, verbose=False):
     ret = s.items()
   return ret
 
-def init_seasons(data, crimes):
+def month_counts(data, crimes):
   g = {}
   for c in crimes:
-    g[crimes] = init_season(data,c, _sort=True, verbose=False)
+    g[crimes] = month_count(data,c, _sort=True, verbose=False)
   return g
 
 def plot_simple_time_series(df, x, y, title="", xlabel='time', ylabel='# of instances of crime', dpi=100):
