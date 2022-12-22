@@ -11,6 +11,10 @@ import matplotlib.pyplot as plt
 from collections import Counter
 from statsmodels.tsa.seasonal import seasonal_decompose
 
+def write_dict(d, fname):
+  with open(fname+'.json', 'w') as fp:
+    json.dump(d, fp)
+
 #ignore homicides,do that seperate
 def plot_all_dispatch_crimes(data):
   AD = [data['rows'][i]['dc_dist'] for i in range(len(data['rows']))]
@@ -38,7 +42,7 @@ def init_season(data, crime):
   for k in s.keys():
     c = 0
     for j in range(1, len(data['rows'])):
-      if crime in data['rows'][i]['dc_dist'] and k in data['rows'][i]['dispatch_date_time'][0]:
+      if crime in data['rows'][j]['dc_dist'] and k in data['rows'][j]['dispatch_date_time'][0]:
         c += 1
     s[k] = c
   return list(sorted(s.items()))
