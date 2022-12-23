@@ -87,7 +87,6 @@ def mean_variance(X):
   X1, X2 = X[0:half], X[half:]
   M1, M2 = X1.mean(), X2.mean()
   V1, V2 = X1.var(), X2.var()
-  ADF = adfuller(X)
   return [M1, M2, V1, V2]
 
 #data should be dataframe, d[0]: time d[1]: values
