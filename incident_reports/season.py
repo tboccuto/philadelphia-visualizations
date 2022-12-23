@@ -40,23 +40,24 @@ def plot_year_dispatch(y, data):
   fig = px.bar(df, x=[i[1] for i in dat2], y=[i[0] for i in dat2], title="Crime Dispatches in Philadelphia year "+str(y))
   return fig
 
-def month_count(data, crime, _sort=False, verbose=False):
+
+def month_count(data, crime, _sort=False, int_dates=True, verbose=False):
   s, ret = {}, None
   for i in range(1, len(data['rows'])):
-    year, month, _ = data['rows'][i]['dispatch_date_time'][0].split('-')
+    year, month, _ = data['rows'][i]['dispatch_date_time'].split('-')
     s[year+'-'+month] = 0
   for k in s.keys():
     c = 0
     for j in range(1, len(data['rows'])):
-      if crime in data['rows'][j]['dc_dist'] and k in data['rows'][j]['dispatch_date_time'][0]:
+      if crime in data['rows'][j]['dc_dist'] and k in data['rows'][j]['dispatch_date_time']:
         c += 1
-    if verbose: print(f'k {k}:c {c}')
-    s[k] = c
+      if verbose: print(f'k {k}:c {c}')
+      s[k] = c
   if _sort:
-    ret = list(sorted(s.items()))
-  else:
-    ret = s.items()
-  return ret
+    s = list(sorted(s.items()))
+  if int_dates:
+    s = [[int(s[i][0].replace('-','')),s[i][1]] for i in range(len(s))]
+  return s
 
 def month_counts(data, crimes):
   g = {}
@@ -99,7 +100,7 @@ def multiplicative_decomposition_detrending(data, multiplicative_decomposition):
 
 #sns dataframe, crime:str
 def parse_dataframe(df, crime):
-  if type(crime) not str: raise ValueError(f'{crime} not type str')
+  if type(crime) is not type(str): raise ValueError(f'{crime} not type str')
   cl = {}
   for i in range(len(df[0])):
     year, month = df[0][i].split('-')
