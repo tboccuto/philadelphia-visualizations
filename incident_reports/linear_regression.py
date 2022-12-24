@@ -15,6 +15,7 @@ class LinearRegression:
     self.preds = []
     self.costs = []
     self.thetas = []
+    self.
 
   def feature_scaling(self, X, Y):
     return (X - X.mean())/X.std(), (Y - Y.mean())/Y.std()
