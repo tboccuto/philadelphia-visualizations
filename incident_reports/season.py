@@ -40,7 +40,7 @@ def plot_year_dispatch(y, data):
   fig = px.bar(df, x=[i[1] for i in dat2], y=[i[0] for i in dat2], title="Crime Dispatches in Philadelphia year "+str(y))
   return fig
 
-
+#slow
 def month_count(data, crime, _sort=False, int_dates=True, verbose=False):
   s, ret = {}, None
   for i in range(1, len(data['rows'])):
@@ -64,6 +64,16 @@ def month_counts(data, crimes):
   for c in crimes:
     g[crimes] = month_count(data,c, _sort=True, verbose=False)
   return g
+
+def stack_df(data):
+  d = []
+  keys = list(set([data['rows'][i]['dc_dist'] for i in range(len(data['rows']))]))
+  for k in keys:
+    dat = month_count(data, k, _sort=True)
+    df = pd.DataFrame(dat, columns=['dates', k])
+    d.append(df)
+  return d
+
 
 def plot_simple_time_series(df, x, y, title="", xlabel='time', ylabel='# of instances of crime', dpi=100):
   plt.figure(figsize=(15,4), dpi=dpi)
