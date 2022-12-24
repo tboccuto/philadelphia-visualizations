@@ -7,7 +7,6 @@ import sklearn
 import matplotlib.pyplot as plt
 from matplotlib import animation, rc
 
-
 class LinearRegression:
   def __init__(self, X, y, plotting=True):
     self.X = X
@@ -15,7 +14,8 @@ class LinearRegression:
     self.preds = []
     self.costs = []
     self.thetas = []
-    self.
+    self.rtheta = []
+    self.cost = None
 
   def feature_scaling(self, X, Y):
     return (X - X.mean())/X.std(), (Y - Y.mean())/Y.std()
@@ -39,7 +39,11 @@ class LinearRegression:
           conv = 0
       idx+=1
     self.costs.pop(0)
-    print(theta[0], theta[1])
+    self.rtheta.append([theta[0], theta[1]])
+    self.cost = self.costs[-1]
+    if verbose: print(f'Metrics {self.rtheta} {self.cost}')
+
+
 
 
 
