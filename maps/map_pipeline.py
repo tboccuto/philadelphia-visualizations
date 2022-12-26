@@ -159,14 +159,7 @@ def generate_maps(data,start_year,stop_year, verbose=True):
    m.get_root().add_child(macro)
    print(f'saving map {res}')
    m.save(res)
-
-if __name__ =="__main__":
-  with open('data.json') as json_file:
-    data = json.load(json_file)
-  generate_maps(data, 2006, 2022)
-  
-  
-  
+ 
 
 
 
