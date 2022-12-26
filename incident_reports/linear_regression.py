@@ -1,11 +1,4 @@
-from season import *
-import os
-import json
 import numpy as np
-import pandas as pd
-import sklearn
-import matplotlib.pyplot as plt
-from matplotlib import animation, rc
 
 class LinearRegression:
   def __init__(self, X, y, plotting=True):

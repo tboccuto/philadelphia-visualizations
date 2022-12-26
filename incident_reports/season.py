@@ -23,21 +23,20 @@ def _write_dict(d, fname):
 
 #ignore homicides,do that seperate
 def plot_all_dispatch_crimes(data):
-  AD = [data['rows'][i]['dc_dist'] for i in range(len(data['rows']))]
-  ADC = Counter(ADC)
-  dat = [[k, v] for k,v in all_crime_counts.items() if k != 'Homicide - Criminal ' and k != 'Homicide - Criminal']
+  AD = Counter([data['rows'][i]['dc_dist'] for i in range(len(data['rows']))])
+  dat = [[k, v] for k,v in AD.items() if k != 'Homicide - Criminal ' and k != 'Homicide - Criminal']
   df = pd.DataFrame(dat)
   fig = px.bar(df, x=[i[1] for i in dat], y=[i[0] for i in dat], title="Crime Dispatches in Philadelphia from 2006 - 2022")
   return fig
 
 def plot_year_dispatch(y, data):
   for i in range(1, len(data['rows'])):
-    d2['rows'][i]['dispatch_date_time'] = d2['rows'][i]['dispatch_date_time'].split('T')
-  cdispatch = [d2['rows'][i] for i in range(len(data['rows'])) if y in d2['rows'][i]['dispatch_date_time'][0]]
+    data['rows'][i]['dispatch_date_time'] = d2['rows'][i]['dispatch_date_time'].split('T')
+  cdispatch = [data['rows'][i] for i in range(len(data['rows'])) if y in data['rows'][i]['dispatch_date_time'][0]]
   ydispatch_count = Counter([cdispatch[i]['dc_dist'] for i in range(len(cdispatch))])
   dat = [[k, v] for k,v in ydispatch_count.items()]
   df = pd.DataFrame(dat)
-  fig = px.bar(df, x=[i[1] for i in dat2], y=[i[0] for i in dat2], title="Crime Dispatches in Philadelphia year "+str(y))
+  fig = px.bar(df, x=[i[1] for i in dat], y=[i[0] for i in dat], title="Crime Dispatches in Philadelphia year"+str(y))
   return fig
 
 #slow
