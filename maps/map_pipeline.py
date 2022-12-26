@@ -41,16 +41,13 @@ def generate_maps(data,start_year,stop_year, verbose=True):
    if verbose: print(f' Processing Map for {crime}')
    m = folium.Map(location=[39.9526, -75.1652], zoom_start=5)
    marker_cluster = MarkerCluster(disableClusteringAtZoom=20).add_to(m)
-   d = {}
-   for i in range(len(data['rows'])):
-     if data['rows'][i]['dc_dist'] == crime:
-       loc = []
-       date = data['rows'][i]['dispatch_date_time'].split('T')
-       X,Y = data['rows'][i]['point_x'], data['rows'][i]['point_y']
-       #if isinstance(type(X), float) and isinstance(type(Y), float):
+   for j in range(len(data['rows'])):
+     if data['rows'][j]['dc_dist'] == crime:
+       date = data['rows'][j]['dispatch_date_time'].split('T')
+       X,Y = data['rows'][j]['point_x'], data['rows'][j]['point_y']
        try:
          folium.Marker(location=[Y,X],
-                      popup=data['rows'][i],
+                      popup=data['rows'][j],
                       icon=folium.Icon(color=colorss[date[0].split('-')[0]],icon='info-sign')).add_to(marker_cluster)
        except Exception: continue
    template = """
