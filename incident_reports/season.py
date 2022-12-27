@@ -11,37 +11,9 @@ import matplotlib.pyplot as plt
 from collections import Counter
 from statsmodels.tsa.seasonal import seasonal_decompose
 
-def _dump(fname):
-  with open(os.getcwd()+fname) as json:
-    data = json.load(fname)
-  d2 = data.copy()
-  return data, d2
-
-def _write_dict(d, fname):
-  with open(fname+'.json', 'w') as fp:
-    json.dump(d, fp)
-
-#ignore homicides,do that seperate
-def plot_all_dispatch_crimes(data):
-  AD = Counter([data['rows'][i]['dc_dist'] for i in range(len(data['rows']))])
-  dat = [[k, v] for k,v in AD.items() if k != 'Homicide - Criminal ' and k != 'Homicide - Criminal']
-  df = pd.DataFrame(dat)
-  fig = px.bar(df, x=[i[1] for i in dat], y=[i[0] for i in dat], title="Crime Dispatches in Philadelphia from 2006 - 2022")
-  return fig
-
-def plot_year_dispatch(y, data):
-  for i in range(1, len(data['rows'])):
-    data['rows'][i]['dispatch_date_time'] = d2['rows'][i]['dispatch_date_time'].split('T')
-  cdispatch = [data['rows'][i] for i in range(len(data['rows'])) if y in data['rows'][i]['dispatch_date_time'][0]]
-  ydispatch_count = Counter([cdispatch[i]['dc_dist'] for i in range(len(cdispatch))])
-  dat = [[k, v] for k,v in ydispatch_count.items()]
-  df = pd.DataFrame(dat)
-  fig = px.bar(df, x=[i[1] for i in dat], y=[i[0] for i in dat], title="Crime Dispatches in Philadelphia year"+str(y))
-  return fig
-
-#slow
-def month_count(data, crime, _sort=False, int_dates=True, verbose=False):
-  s, ret = {}, None
+#TODO: This can be faster
+def month_count(data, crime, sort=True, verbose=False):
+  s = {}
   for i in range(1, len(data['rows'])):
     year, month, _ = data['rows'][i]['dispatch_date_time'].split('-')
     s[year+'-'+month] = 0
@@ -52,9 +24,8 @@ def month_count(data, crime, _sort=False, int_dates=True, verbose=False):
         c += 1
       if verbose: print(f'k {k}:c {c}')
       s[k] = c
-  if _sort:
+  if sort:
     s = list(sorted(s.items()))
-  if int_dates:
     s = [[int(s[i][0].replace('-','')),s[i][1]] for i in range(len(s))]
   return s
 
@@ -72,7 +43,6 @@ def stack_df(data):
     df = pd.DataFrame(dat, columns=['dates', k])
     d.append(df)
   return d
-
 
 def plot_simple_time_series(df, x, y, title="", xlabel='time', ylabel='# of instances of crime', dpi=100):
   plt.figure(figsize=(15,4), dpi=dpi)
@@ -105,16 +75,3 @@ def detrend_best_fit(data):
 #data should be dataframe, d[0]: time d[1]: values 
 def multiplicative_decomposition_detrending(data, multiplicative_decomposition):
   return np.array(df[1].values, dtype=np.float32) - np.array(multiplicative_decomposition.trend, dtype=np.float32)
-
-#sns dataframe, crime:str
-def parse_dataframe(df, crime):
-  if type(crime) is not type(str): raise ValueError(f'{crime} not type str')
-  cl = {}
-  for i in range(len(df[0])):
-    year, month = df[0][i].split('-')
-    dd = year+month
-    cl[int(dd)] = df[1][i]
-  return pd.DataFrame({'dates':list(cl.keys()),str(crime):list(cl.values())})
-
-
-
