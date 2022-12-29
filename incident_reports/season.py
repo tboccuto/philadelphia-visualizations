@@ -12,8 +12,8 @@ from collections import Counter
 from statsmodels.tsa.seasonal import seasonal_decompose
 
 #TODO: This can be faster
-def month_count(data, crime, sort=True, verbose=False):
-  s = {}
+def month_count(data, crime, _sort=False, int_dates=True, verbose=False):
+  s, ret = {}, None
   for i in range(1, len(data['rows'])):
     year, month, _ = data['rows'][i]['dispatch_date_time'].split('-')
     s[year+'-'+month] = 0
@@ -24,8 +24,9 @@ def month_count(data, crime, sort=True, verbose=False):
         c += 1
       if verbose: print(f'k {k}:c {c}')
       s[k] = c
-  if sort:
+  if _sort:
     s = list(sorted(s.items()))
+  if int_dates and isinstance(s, list):
     s = [[int(s[i][0].replace('-','')),s[i][1]] for i in range(len(s))]
   return s
 
@@ -43,6 +44,7 @@ def stack_df(data):
     df = pd.DataFrame(dat, columns=['dates', k])
     d.append(df)
   return d
+
 
 def plot_simple_time_series(df, x, y, title="", xlabel='time', ylabel='# of instances of crime', dpi=100):
   plt.figure(figsize=(15,4), dpi=dpi)
@@ -75,3 +77,16 @@ def detrend_best_fit(data):
 #data should be dataframe, d[0]: time d[1]: values 
 def multiplicative_decomposition_detrending(data, multiplicative_decomposition):
   return np.array(df[1].values, dtype=np.float32) - np.array(multiplicative_decomposition.trend, dtype=np.float32)
+
+#sns dataframe, crime:str
+def parse_dataframe(df, crime):
+  if type(crime) is not type(str): raise ValueError(f'{crime} not type str')
+  cl = {}
+  for i in range(len(df[0])):
+    year, month = df[0][i].split('-')
+    dd = year+month
+    cl[int(dd)] = df[1][i]
+  return pd.DataFrame({'dates':list(cl.keys()),str(crime):list(cl.values())})
+
+
+
