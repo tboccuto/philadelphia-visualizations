@@ -80,13 +80,11 @@ def multiplicative_decomposition_detrending(data, multiplicative_decomposition):
 
 #sns dataframe, crime:str
 def parse_dataframe(df, crime):
-  if type(crime) is not type(str): raise ValueError(f'{crime} not type str')
   cl = {}
-  for i in range(len(df[0])):
-    year, month = df[0][i].split('-')
+  for i in range(len(df['dates'].values)):
+    year, month = df['dates'][i].split('-')
     dd = year+month
-    cl[int(dd)] = df[1][i]
+    cl[int(dd)] = df[df.columns[1]].values[i]
   return pd.DataFrame({'dates':list(cl.keys()),str(crime):list(cl.values())})
-
 
 

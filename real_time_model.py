@@ -2,11 +2,7 @@ import os
 import sys
 import json
 import urllib.request
-from matplotlib.axis import XAxis, YAxis
-import numpy as np
-import pandas as pd
-from d import month_count, month_counts
-import seaborn as sns
+from matplotlib.axis import XAxis, YAxis import numpy as np import pandas as pd from d import month_count, month_counts import seaborn as sns
 import plotly.express as px
 from scipy import signal
 import matplotlib.pyplot as plt   
@@ -26,7 +22,7 @@ class RealTimeModel:
     path: string
           sysarv data
     
-    query cartoSQL for new batch
+    query SQL for new batch
     and update class attributes
     """
     self.path = path
@@ -68,6 +64,11 @@ class RealTimeModel:
     fig.write_image('display_all_dispatch_counts-plotly.png')
 
   def plot_df_line_graph(self):
+    """
+    Generate line graph, 
+    Make new dir, 
+    Save all png to new dir
+    """
     for i in range(len(self.stacked_dfs)):
       title = self.stacked_dfs[i].columns[1]
       title = title.replace('/','').replace('-','').replace(' ','')
@@ -78,6 +79,11 @@ class RealTimeModel:
         fig.savefig(new_dir+'/'+title+'.png')
 
   def plot_line_graph_doublesided(self):
+    """
+    Generate double sided line graph,
+    Make new dir,
+    Save all png to new dir
+    """
     for i in range(len(self.stacked_dfs)):
       title = self.stacked_dfs[i].columns[1]
       title = title.replace('/','').replace('-','').replace(' ','')
@@ -93,8 +99,41 @@ class RealTimeModel:
       fig.savefig(new_dir+'/'+title+'.png')
 
   def plot_add_decomposition(self):
-    pass
+    """
+    Generate Additive Deocomposition graphs
+    Make new dir,
+    Save all png to new dir 
+    """
+    for i in range(len(self.stacked_dfs)):
+      title = self.stacked_dfs[i].columns[1]
+      title = title.replace('/','').replace('-','').replace(' ','')
+      add_decomp = seasonal_decompose(self.stacked_dfs[i][self.stacked_dfs[i].columns[1]].values, model='additive', period=30)
+      plot = additive_decomposition.plot().suptitle(title +' Additive Decomposition', fontsize=16)
+      plt.tight_layout(rect=[0, 0.03, 1, 0.95])
+      fig = plot.get_figure()
+      new_dir = os.getcwd()+'/additive_decomposition'
+      if not os.path.exists(new_dir): os.makedirs(new_dir)
+      fig.savefig(new_dir+'/'+title+'.png')
 
+  def plot_mult_decomposition(self):
+    """
+    Generate Additive Deocomposition graphs
+    Make new dir,
+    Save all png to new dir 
+    """
+    for i in range(len(self.stacked_dfs)):
+      title = self.stacked_dfs[i].columns[1]
+      title = title.replace('/','').replace('-','').replace(' ','')
+      add_decomp = seasonal_decompose(self.stacked_dfs[i][self.stacked_dfs[i].columns[1]].values, model='multiplicative', period=30)
+      plot = additive_decomposition.plot().suptitle(title +' Additive Decomposition', fontsize=16)
+      plt.tight_layout(rect=[0, 0.03, 1, 0.95])
+      fig = plot.get_figure()
+      new_dir = os.getcwd()+'/additive_decomposition'
+      if not os.path.exists(new_dir): os.makedirs(new_dir)
+      fig.savefig(new_dir+'/'+title+'.png')
+
+  def linear_regression_line_plot(self):
+    pass
 
   def plot_monthly_crime_trends(self, doublesided=True, ndecomp=True, lg_line=True, correlation_matrix=True, \
                                 distplot=True, verbose=True):
