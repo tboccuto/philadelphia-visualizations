@@ -2,7 +2,10 @@ import os
 import sys
 import json
 import urllib.request
-from matplotlib.axis import XAxis, YAxis import numpy as np import pandas as pd from d import month_count, month_counts import seaborn as sns
+from matplotlib.axis import XAxis, YAxis 
+import numpy as np 
+import pandas as pd 
+ import seaborn as sns
 import plotly.express as px
 from scipy import signal
 import matplotlib.pyplot as plt   
