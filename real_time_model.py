@@ -79,18 +79,22 @@ class RealTimeModel:
 
   def plot_line_graph_doublesided(self):
     for i in range(len(self.stacked_dfs)):
-    title = self.stacked_dfs[i].columns[1]
-    title = title.replace('/','').replace('-','').replace(' ','')
-    x, y1 = self.stacked_dfs[i]['dates'].values, self.stacked_dfs[i][self.stacked_dfs[i].columns[1]].values
-    fig, ax = plt.subplots(1, 1, figsize=(20,5), dpi= 120)
-    plt.fill_between(x, y1=y1, y2=-y1, alpha=0.5, linewidth=2, color='seagreen')
-    plt.ylim(-6500, 6500)
-    plt.title(title+' (Two Side View)', fontsize=16)
-    plt.hlines(y=0, xmin=np.min(x), xmax=np.max(x), linewidth=.5)
-    #f = fig.get_figure()
-    new_dir = os.getcwd()+'/two_sided_graphs'
-    if not os.path.exists(new_dir): os.makedirs(new_dir)
-    fig.savefig(new_dir+'/'+title+'.png')
+      title = self.stacked_dfs[i].columns[1]
+      title = title.replace('/','').replace('-','').replace(' ','')
+      x, y1 = self.stacked_dfs[i]['dates'].values, self.stacked_dfs[i][self.stacked_dfs[i].columns[1]].values
+      fig, ax = plt.subplots(1, 1, figsize=(20,5), dpi= 120)
+      plt.fill_between(x, y1=y1, y2=-y1, alpha=0.5, linewidth=2, color='seagreen')
+      plt.ylim(-6500, 6500)
+      plt.title(title+' (Two Side View)', fontsize=16)
+      plt.hlines(y=0, xmin=np.min(x), xmax=np.max(x), linewidth=.5)
+      #f = fig.get_figure()
+      new_dir = os.getcwd()+'/two_sided_graphs'
+      if not os.path.exists(new_dir): os.makedirs(new_dir)
+      fig.savefig(new_dir+'/'+title+'.png')
+
+  def plot_add_decomposition(self):
+    pass
+
 
   def plot_monthly_crime_trends(self, doublesided=True, ndecomp=True, lg_line=True, correlation_matrix=True, \
                                 distplot=True, verbose=True):
