@@ -73,7 +73,9 @@ class RealTimeModel:
       title = title.replace('/','').replace('-','').replace(' ','')
       plot = self.stacked_dfs[i].plot(x='dates', y=li[i].columns[1])
       fig = plot.get_figure()
-      fig.savefig(title+'.png')
+      new_dir = os.getcwd()+'/line_graphs'
+      if not os.path.exists(new_dir): os.makedirs(new_dir)
+        fig.savefig(new_dir+'/'+title+'.png')
 
   def plot_line_graph_doublesided(self):
     pass
