@@ -33,11 +33,15 @@ class RealTimeModel:
     self.data = None
     self.all_crime_counts = None
     self.keys = None
+    self.stacked_dfs = None
     with urllib.request.urlopen(self.path.replace(' ', '%20')) as url:
       self.data = json.load(url)
       
     self.all_crime_counts = Counter([self.data['rows'][i]['dc_dist'] for i in range(len(self.data['rows']))])
     self.keys = list(self.all_crime_counts.keys())
+    self.stacked_dfs = stack_df(self.data)
+
+
     print(f'Num of categories {len(self.keys)}')
     
   def display_all_dispatch_counts_plotly(self, data, year=None):
@@ -62,6 +66,19 @@ class RealTimeModel:
       title = 'Crime Dispatches in Philadelphia year ' + str(year)
     fig = px.bar(df, x=[i[1] for i in dat], y=[i[0] for i in dat], title=title)
     fig.write_image('display_all_dispatch_counts-plotly.png')
+
+  def plot_df_line_graph(self):
+    for i in range(len(self.stacked_dfs)):
+      title = self.stacked_dfs[i].columns[1]
+      title = title.replace('/','').replace('-','').replace(' ','')
+      plot = self.stacked_dfs[i].plot(x='dates', y=li[i].columns[1])
+      fig = plot.get_figure()
+      fig.savefig(title+'.png')
+
+  def plot_line_graph_doublesided(self):
+    pass
+
+    
 
   def plot_monthly_crime_trends(self, doublesided=True, ndecomp=True, lg_line=True, correlation_matrix=True, \
                                 distplot=True, verbose=True):
