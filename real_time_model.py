@@ -72,11 +72,10 @@ class RealTimeModel:
     for i in range(len(self.stacked_dfs)):
       title = self.stacked_dfs[i].columns[1]
       title = title.replace('/','').replace('-','').replace(' ','')
-      plot = self.stacked_dfs[i].plot(x='dates', y=li[i].columns[1])
-      fig = plot.get_figure()
+      self.stacked_dfs[i].plot(x='dates', y=li[i].columns[1])
       new_dir = os.getcwd()+'/line_graphs'
       if not os.path.exists(new_dir): os.makedirs(new_dir)
-      fig.savefig(new_dir+'/'+title+'.png')
+      plt.savefig(new_dir+'/'+title+'.png')
 
   def plot_line_graph_doublesided(self):
     """
@@ -93,10 +92,9 @@ class RealTimeModel:
       plt.ylim(-6500, 6500)
       plt.title(title+' (Two Side View)', fontsize=16)
       plt.hlines(y=0, xmin=np.min(x), xmax=np.max(x), linewidth=.5)
-      #f = fig.get_figure()
       new_dir = os.getcwd()+'/two_sided_graphs'
       if not os.path.exists(new_dir): os.makedirs(new_dir)
-      fig.savefig(new_dir+'/'+title+'.png')
+      plt.savefig(new_dir+'/'+title+'.png')
 
   def plot_add_decomposition(self):
     """
@@ -108,12 +106,11 @@ class RealTimeModel:
       title = self.stacked_dfs[i].columns[1]
       title = title.replace('/','').replace('-','').replace(' ','')
       add_decomp = seasonal_decompose(self.stacked_dfs[i][self.stacked_dfs[i].columns[1]].values, model='additive', period=30)
-      plot = additive_decomposition.plot().suptitle(title +' Additive Decomposition', fontsize=16)
+      add_decomp.plot().suptitle(title +' Additive Decomposition', fontsize=16)
       plt.tight_layout(rect=[0, 0.03, 1, 0.95])
-      fig = plot.get_figure()
       new_dir = os.getcwd()+'/additive_decomposition'
       if not os.path.exists(new_dir): os.makedirs(new_dir)
-      fig.savefig(new_dir+'/'+title+'.png')
+      plt.savefig(new_dir+'/'+title+'.png')
 
   def plot_mult_decomposition(self):
     """
@@ -124,13 +121,12 @@ class RealTimeModel:
     for i in range(len(self.stacked_dfs)):
       title = self.stacked_dfs[i].columns[1]
       title = title.replace('/','').replace('-','').replace(' ','')
-      add_decomp = seasonal_decompose(self.stacked_dfs[i][self.stacked_dfs[i].columns[1]].values, model='multiplicative', period=30)
-      plot = additive_decomposition.plot().suptitle(title +' Additive Decomposition', fontsize=16)
+      mult_decomp = seasonal_decompose(self.stacked_dfs[i][self.stacked_dfs[i].columns[1]].values, model='multiplicative', period=30)
+      mult_decomp.plot().suptitle(title +' Additive Decomposition', fontsize=16)
       plt.tight_layout(rect=[0, 0.03, 1, 0.95])
-      fig = plot.get_figure()
       new_dir = os.getcwd()+'/additive_decomposition'
       if not os.path.exists(new_dir): os.makedirs(new_dir)
-      fig.savefig(new_dir+'/'+title+'.png')
+      plt.savefig(new_dir+'/'+title+'.png')
 
   def plot_linear_regression_line_plot(self):
     """
@@ -142,11 +138,10 @@ class RealTimeModel:
       title =self.stacked_dfs[i].columns[1]
       title = title.replace('/','').replace('-','').replace(' ','')
       parsed_df = parse_dataframe(self.stacked_dfs[i], self.stacked_dfs[i].columns[1])
-      fig = sns.lmplot(data=parsed_df, x=parsed_df.columns[0], y=parsed_df.columns[1] ,aspect=2, height=10)
-      fig.add_legend()
+      sns.lmplot(data=parsed_df, x=parsed_df.columns[0], y=parsed_df.columns[1] ,aspect=2, height=10)
       new_dir = os.getcwd()+'/LG_plots'
       if not os.path.exists(new_dir): os.makedirs(new_dir)
-      fig.savefig(new_dir+'/'+title+'.png')
+      plt.savefig(new_dir+'/'+title+'.png')
 
   def plot_correlation_matrices(self):
     """
@@ -159,78 +154,22 @@ class RealTimeModel:
       title = title.replace('/','').replace('-','').replace(' ','')
       parsed_df = parse_dataframe(self.stacked_dfs[i], self.stacked_dfs[i].columns[1])
       plt.figure(figsize=(12, 6))
-      plot = sns.heatmap(parsed_df.corr(), annot=True, cmap="Wistia")
+      sns.heatmap(parsed_df.corr(), annot=True, cmap="Wistia")
       new_dir = os.getcwd()+'/correlaton_matrices'
       if not os.path.exists(new_dir): os.makedirs(new_dir)
-      fig = plot.get_figure()
-      fig.savefig(new_dir+'/'+title+'.png')
+      plt.savefig(new_dir+'/'+title+'.png')
 
-  def plot_distributions(self):
-    pass
-    
-
-
-
-
-
-
-
-  def plot_monthly_crime_trends(self, doublesided=True, ndecomp=True, lg_line=True, correlation_matrix=True, \
-                                distplot=True, verbose=True):
-    """
-    Generate monthly plots of crimes across time
-    opt to do double sided plot to see trend more
-    opt to seaonal decompostion
-    opt for linear regression
-    opt for correlation matrix
-    opt for distribution plot
-    """
-    li = []
-    for k in self.keys:
-      normk = k.replace('/','').strip().replace(' - ','').replace(' ','')
-      XAxis,YAxis= 'Months', 'Crime Counts ' + normk
-      if verbose: print(f' Crime {k} being processed')
-      dat = month_count(self.data, k, sort=True)
-      df = pd.DataFrame(dat, columns=['dates', k])
-      X, Y = df[0].values, df[1].values
-      plt.figure(figsize=(15,4), dpi=dpi)
-      plt.plot(X, Y, color='tab:blue')
-      plt.gca().set(title="Crime Counts from 2006 to present for theft"+str(normk), xlabel=XAxis, ylabel=YAxis)
-      plt.savefig(normk+'_matplot.png')
-      if doublesided:
-        x = df[0].values
-        y1 = df[1].values
-        fig, ax = plt.subplots(1, 1, figsize=(20,5), dpi= 120)
-        plt.fill_between(x, y1=y1, y2=-y1, alpha=0.5, linewidth=2, color='seagreen')
-        plt.ylim(-6500, 6500)
-        plt.title(normk + ' (Two Side View)', fontsize=16)
-        plt.hlines(y=0, xmin=np.min(df[0]), xmax=np.max(df[0]), linewidth=.5)
-        plt.savefig(normk +'_matplot2sided.png')
-      if ndecomp:
-        mult_decomposition = seasonal_decompose(df[1], model='multiplicative', period=30)
-        add_decomposition = seasonal_decompose(df[1], model='additive', period=30)
-        plt.rcParams.update({'figure.figsize': (16,12)})
-        mult_decomposition.plot().suptitle('Multiplicative Decomposition', fontsize=16)
-        plt.tight_layout(rect=[0, 0.03, 1, 0.95])
-        add_decomposition.plot().suptitle('Additive Decomposition', fontsize=16)
-        plt.tight_layout(rect=[0, 0.03, 1, 0.95])
-        plt.savefig(normk+'_decomposition_matplot.png')
-      if lg_line or correlation_matrix:
-       int_dates_df = parse_dataframe(df, k) 
-
-      if lg_line:
-        LG_plot = sns.lmplot(data=int_dates_df, x=XAxis, y=YAxis,aspect=2, height=10)
-        fig = LG_plot.get_figure()
-        fig.savefig('LG'+normk+'.png') 
-      if correlation_matrix:
-        correlation_matrix_plot = sns.heatmap(int_dates_df.corr(), annot=True, cmap="Wistia")
-        correlation_matrix_plot.get_figure()
-        fig.savefig('correlation_matrix'+normk+'.png')
-      if distplot:
-        distplot_log10 = sns.distplot(np.log10(int_dates_df ,bins=len(int_dates_df['dates'])-10,color='b',ax=ax))
-        fig = distplot_log10.get_figure()
-        fig.savefig('distplot'+'_'+normk+'.png')
- 
+  def plot_distplots(self):
+    for i in range(len(li)):
+      title = self.stacked_dfs[i].columns[1]
+      title = title.replace('/','').replace('-','').replace(' ','')
+      f= plt.figure(figsize=(12,4))
+      d = self.stacked_dfs[i][self.stacked_dfs[i].columns[1]].values
+      sns.distplot(d, bins=len(d), hist=True, kde_kws={'bw':0.1}).set(title=title)
+      new_dir = os.getcwd()+'/distplot_plots'
+      if not os.path.exists(new_dir): os.makedirs(new_dir)
+      plt.savefig(new_dir+'/'+title+'.png')
+      
   def create_crime_maps(self, start, stop):
     """
     See map_pipeline.py for more info
