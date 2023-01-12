@@ -76,7 +76,7 @@ class RealTimeModel:
       fig = plot.get_figure()
       new_dir = os.getcwd()+'/line_graphs'
       if not os.path.exists(new_dir): os.makedirs(new_dir)
-        fig.savefig(new_dir+'/'+title+'.png')
+      fig.savefig(new_dir+'/'+title+'.png')
 
   def plot_line_graph_doublesided(self):
     """
@@ -138,20 +138,39 @@ class RealTimeModel:
     Make new dir,
     Save all png to new dir
     """
-    for i in range(len(li)):
+    for i in range(len(self.stacked_dfs)):
       title =self.stacked_dfs[i].columns[1]
       title = title.replace('/','').replace('-','').replace(' ','')
       parsed_df = parse_dataframe(self.stacked_dfs[i], self.stacked_dfs[i].columns[1])
-      if len(x) != len(y):
-          print(1)
       fig = sns.lmplot(data=parsed_df, x=parsed_df.columns[0], y=parsed_df.columns[1] ,aspect=2, height=10)
       fig.add_legend()
       new_dir = os.getcwd()+'/LG_plots'
       if not os.path.exists(new_dir): os.makedirs(new_dir)
       fig.savefig(new_dir+'/'+title+'.png')
 
-    def plot_correlation_matrices(self):
-      pass
+  def plot_correlation_matrices(self):
+    """
+    Generate correlation matrices between Dates and Crimes
+    Make new Dir
+    Save all png to new dir
+    """
+    for i in range(len(self.stacked_dfs)):
+      title =self.stacked_dfs[i].columns[1]
+      title = title.replace('/','').replace('-','').replace(' ','')
+      parsed_df = parse_dataframe(self.stacked_dfs[i], self.stacked_dfs[i].columns[1])
+      plt.figure(figsize=(12, 6))
+      plot = sns.heatmap(parsed_df.corr(), annot=True, cmap="Wistia")
+      new_dir = os.getcwd()+'/correlaton_matrices'
+      if not os.path.exists(new_dir): os.makedirs(new_dir)
+      fig = plot.get_figure()
+      fig.savefig(new_dir+'/'+title+'.png')
+
+  def plot_distributions(self):
+    pass
+    
+
+
+
 
 
 
@@ -214,7 +233,7 @@ class RealTimeModel:
  
   def create_crime_maps(self, start, stop):
     """
-    See maps/map_pipeline.py for more info
+    See map_pipeline.py for more info
     Using Folium API,
     Specify time step:
     for each year, crime category
@@ -225,7 +244,7 @@ class RealTimeModel:
 
   def linear_regression_animation(self):
     """
-    See incident_reports/linear_regression.py for linear
+    See linear_regression.py for linear
     regression implementation
     
     Perform Multivariate linear Regression on monthly crime counts
