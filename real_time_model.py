@@ -132,8 +132,29 @@ class RealTimeModel:
       if not os.path.exists(new_dir): os.makedirs(new_dir)
       fig.savefig(new_dir+'/'+title+'.png')
 
-  def linear_regression_line_plot(self):
-    pass
+  def plot_linear_regression_line_plot(self):
+    """
+    Use library to calc Linear Regression
+    Make new dir,
+    Save all png to new dir
+    """
+    for i in range(len(li)):
+      title =self.stacked_dfs[i].columns[1]
+      title = title.replace('/','').replace('-','').replace(' ','')
+      parsed_df = parse_dataframe(self.stacked_dfs[i], self.stacked_dfs[i].columns[1])
+      if len(x) != len(y):
+          print(1)
+      fig = sns.lmplot(data=parsed_df, x=parsed_df.columns[0], y=parsed_df.columns[1] ,aspect=2, height=10)
+      fig.add_legend()
+      new_dir = os.getcwd()+'/LG_plots'
+      if not os.path.exists(new_dir): os.makedirs(new_dir)
+      fig.savefig(new_dir+'/'+title+'.png')
+
+    def plot_correlation_matrices(self):
+      pass
+
+
+
 
   def plot_monthly_crime_trends(self, doublesided=True, ndecomp=True, lg_line=True, correlation_matrix=True, \
                                 distplot=True, verbose=True):
