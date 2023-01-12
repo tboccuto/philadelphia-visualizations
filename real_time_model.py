@@ -5,7 +5,7 @@ import urllib.request
 from matplotlib.axis import XAxis, YAxis 
 import numpy as np 
 import pandas as pd 
- import seaborn as sns
+import seaborn as sns
 import plotly.express as px
 from scipy import signal
 import matplotlib.pyplot as plt   
