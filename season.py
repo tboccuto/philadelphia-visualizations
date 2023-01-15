@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import os
 import json
+import time
 import numpy as np
 import pandas as pd
 import seaborn as sns
@@ -36,13 +37,17 @@ def month_counts(data, crimes):
     g[crimes] = month_count(data,c, _sort=True, verbose=False)
   return g
 
-def stack_df(data):
+def stack_df(data, verbose=True):
   d = []
   keys = list(set([data['rows'][i]['dc_dist'] for i in range(len(data['rows']))]))
   for k in keys:
+    start = time.time()
+    print(f'stacking crime {k}')
     dat = month_count(data, k, _sort=True)
     df = pd.DataFrame(dat, columns=['dates', k])
     d.append(df)
+    end = time.time()
+    print(f'Time stacking {k} {end - start}')
   return d
 
 
@@ -79,7 +84,7 @@ def multiplicative_decomposition_detrending(data, multiplicative_decomposition):
   return np.array(df[1].values, dtype=np.float32) - np.array(multiplicative_decomposition.trend, dtype=np.float32)
 
 #sns dataframe, crime:str
-def parse_dataframe(df, crime):
+def parse_dataframe(df, crime, verbose=True):
   cl = {}
   for i in range(len(df['dates'].values)):
     year, month = df['dates'][i].split('-')

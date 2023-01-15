@@ -1,6 +1,7 @@
 import os
 import sys
 import json
+import time
 import urllib.request
 from matplotlib.axis import XAxis, YAxis 
 import numpy as np 
@@ -75,7 +76,7 @@ class RealTimeModel:
     for i in range(len(self.stacked_dfs)):
       title = self.stacked_dfs[i].columns[1]
       title = title.replace('/','').replace('-','').replace(' ','')
-      self.stacked_dfs[i].plot(x='dates', y=li[i].columns[1])
+      self.stacked_dfs[i].plot(x='dates', y=self.stacked_dfs[i].columns[1])
       new_dir = os.getcwd()+'/line_graphs'
       if not os.path.exists(new_dir): os.makedirs(new_dir)
       plt.savefig(new_dir+'/'+title+'.png')
@@ -163,7 +164,7 @@ class RealTimeModel:
       plt.savefig(new_dir+'/'+title+'.png')
 
   def plot_distplots(self):
-    for i in range(len(li)):
+    for i in range(len(self.stacked_dfs)):
       title = self.stacked_dfs[i].columns[1]
       title = title.replace('/','').replace('-','').replace(' ','')
       f= plt.figure(figsize=(12,4))
@@ -209,9 +210,9 @@ class RealTimeModel:
       annotation2.set_text('J = %.2f' % (cost_list_mod[i]))
       return line1, line2, line3, annotation1, annotation2
 
-    for i in range(len(li)):
-      keys = li[i].columns
-      LG = LinearRegression(li[i][keys[0]], li[i][keys[1]])
+    for i in range(len(self.stacked_dfs)):
+      keys = self.stacked_dfs[i].columns
+      LG = LinearRegression(self.stacked_dfs[i][keys[0]], self.stacked_dfs[i][keys[1]])
       gd = LG.gradient_descent(LG.X, LG.y, theta, alpha)
       x, y = LG.X, LG.y ##update shape of x to plot
       ### Animation code
@@ -248,7 +249,22 @@ class RealTimeModel:
       
       #fname = str(li[i][keys[1]]).replace('/','').strip().replace(' - ','').replace(' ','')
       anim.save('LG'+fname+'.gif', writer='imagemagick', fps = 30)
+ 
+def main():
+  start = time.time()
+  print(' ******** Starting Model ********** ')
+  PATH = "https://phl.carto.com/api/v2/sql?q=SELECT text_general_code dc_dist,dispatch_date_time,point_x,point_y FROM incidents_part1_part2"
+  r = RealTimeModel(PATH)
+  r.plot_df_line_graph()
+  r.plot_line_graph_doublesided()
+  r.plot_add_decomposition()
+  #r.plot_linear_regression_line_plot()
+  #r.plot_correlation_matrices()
+  r.create_crime_maps(2017, 2022)
+  r.linear_regression_animation()
+  end = time.time()
+  print(end - start)
 
-
-
+if __name__ == "__main__":
+  main()
 
