@@ -164,6 +164,11 @@ class RealTimeModel:
       plt.savefig(new_dir+'/'+title+'.png')
 
   def plot_distplots(self):
+    """
+    Generate distplots that create histograms of crimes
+    Make new dir
+    Save all png to new dir
+    """
     for i in range(len(self.stacked_dfs)):
       title = self.stacked_dfs[i].columns[1]
       title = title.replace('/','').replace('-','').replace(' ','')
@@ -193,6 +198,10 @@ class RealTimeModel:
     Perform Multivariate linear Regression on monthly crime counts
     and save fig of the cost and estimation of coeff M 
     """
+
+    #TODO: We do not need to create datastructure, its 
+    # created in the constructor so can be accessed throughout the
+    #entire class, this needs to be fixed
     li = stack_df(self.data)
     alpha = 0.0001
     theta = np.random.rand(2)
@@ -249,22 +258,3 @@ class RealTimeModel:
       
       #fname = str(li[i][keys[1]]).replace('/','').strip().replace(' - ','').replace(' ','')
       anim.save('LG'+fname+'.gif', writer='imagemagick', fps = 30)
- 
-def main():
-  start = time.time()
-  print(' ******** Starting Model ********** ')
-  PATH = "https://phl.carto.com/api/v2/sql?q=SELECT text_general_code dc_dist,dispatch_date_time,point_x,point_y FROM incidents_part1_part2"
-  r = RealTimeModel(PATH)
-  r.plot_df_line_graph()
-  r.plot_line_graph_doublesided()
-  r.plot_add_decomposition()
-  #r.plot_linear_regression_line_plot()
-  #r.plot_correlation_matrices()
-  r.create_crime_maps(2017, 2022)
-  r.linear_regression_animation()
-  end = time.time()
-  print(end - start)
-
-if __name__ == "__main__":
-  main()
-
